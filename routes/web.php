@@ -12,7 +12,10 @@ use Inertia\Inertia;
 
 Route::get('homepage', [HomepageController::class,'index'])->name('homepage')->middleware('auth');
 
-route::resource('post', PostController::class);
+route::resource('post', PostController::class)->middleware('auth');
+
+Route::post('post/like_dislike', [PostController::class,'ajaxLike'])->name('likedislike')->middleware('auth');
+
 
 
 require __DIR__.'/settings.php';

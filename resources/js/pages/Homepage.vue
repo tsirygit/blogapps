@@ -48,9 +48,13 @@
 
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ posts.content }}</p>
                         <div class="flex justify-center gap-4">
-                            <Link
-                                :href="route('post.show', posts.id)"
-                                class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            <form
+                                @click.prevent="like(posts.id, true)"
+                                :class="[
+                                    'inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium text-white focus:ring-4 focus:outline-none',
+                                    likedPosts[posts.id] ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700',
+                                    'focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
+                                ]"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                     <path
@@ -58,7 +62,7 @@
                                         d="M23 10a2 2 0 0 0-2-2h-6.32l.96-4.57c.02-.1.03-.21.03-.32c0-.41-.17-.79-.44-1.06L14.17 1L7.59 7.58C7.22 7.95 7 8.45 7 9v10a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73zM1 21h4V9H1z"
                                     />
                                 </svg>
-                            </Link>
+                            </form>
 
                             <Link
                                 :href="route('post.show', posts.id)"
@@ -94,12 +98,17 @@
 <script setup>
 import NavbarLayout from '@/layouts/NavbarLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
-defineProps({
+const props = defineProps({
     post: Array,
 });
+const form = useForm({
+    post_id: null,
+    like: false,
+});
 
-const form = useForm({});
+const likedPosts = ref({});
 
 const getImageUrl = (Path) => {
     if (Path) {
@@ -109,5 +118,21 @@ const getImageUrl = (Path) => {
 };
 const submit = (postId) => {
     form.delete(route('post.destroy', postId));
+};
+
+const like = (postId, like) => {
+    form.post_id = postId;
+    form.like = like;
+
+    form.post(route('likedislike'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            likedPosts.value[postId] = !likedPosts.value[postId];
+            console.log('Like envoyé avec succès');
+        },
+        onError: (errors) => {
+            console.error('Erreur:', errors);
+        },
+    });
 };
 </script>

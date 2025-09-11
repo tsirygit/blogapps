@@ -116,4 +116,24 @@ class PostController extends Controller
 
         return redirect()->route('homepage')->with('success', 'Votre post a été supprimer  avec avec succès.');
     }
+
+    public function ajaxLike(Request $request) 
+    {
+
+        $request->validate([
+            'post_id' => 'required|integer|exists:posts,id',
+            'like' => 'nullable|boolean',
+        ]);
+
+         $user = auth()->user();
+
+         $postId = $request->post_id;
+
+         $like = $request->like;
+
+         $likeDislike = $user->LikeDislike($postId, $like);
+
+         return redirect()->route('homepage')->with('status', $likeDislike);
+       
+    }
 }
