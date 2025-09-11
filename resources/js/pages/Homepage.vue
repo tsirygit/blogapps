@@ -52,7 +52,7 @@
                                 @click.prevent="like(posts.id, true)"
                                 :class="[
                                     'inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium text-white focus:ring-4 focus:outline-none',
-                                    likedPosts[posts.id] ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700',
+                                    likedPosts[posts.id] ? 'bg-red-600' : 'bg-blue-600 hover:bg-blue-700',
                                     'focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
                                 ]"
                             >
@@ -62,6 +62,9 @@
                                         d="M23 10a2 2 0 0 0-2-2h-6.32l.96-4.57c.02-.1.03-.21.03-.32c0-.41-.17-.79-.44-1.06L14.17 1L7.59 7.58C7.22 7.95 7 8.45 7 9v10a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73zM1 21h4V9H1z"
                                     />
                                 </svg>
+                                <span class="ml-2 text-sm text-white">
+                                    {{ posts.likes_count }}
+                                </span>
                             </form>
 
                             <Link
@@ -98,7 +101,7 @@
 <script setup>
 import NavbarLayout from '@/layouts/NavbarLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps({
     post: Array,
@@ -135,4 +138,10 @@ const like = (postId, like) => {
         },
     });
 };
+
+onMounted(() => {
+    props.post.forEach((p) => {
+        likedPosts.value[p.id] = p.isLiked;
+    });
+});
 </script>

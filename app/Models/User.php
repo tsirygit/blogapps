@@ -56,6 +56,7 @@ class User extends Authenticatable
 
     public function hasLiked($postId)
     {
+        
         return $this->likes()->where('post_id', $postId)->where('like', true)->exists();
     }
 
