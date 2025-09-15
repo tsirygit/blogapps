@@ -48,7 +48,7 @@
 
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ posts.content }}</p>
                         <div class="flex justify-center gap-4">
-                            <form
+                            <button
                                 @click.prevent="like(posts.id, true)"
                                 :class="[
                                     'inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium text-white focus:ring-4 focus:outline-none',
@@ -65,10 +65,10 @@
                                 <span class="ml-2 text-sm text-white">
                                     {{ posts.likes_count }}
                                 </span>
-                            </form>
+                            </button>
 
                             <Link
-                                :href="route('post.show', posts.id)"
+                                :href="route('comment.create', posts.id)"
                                 class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -77,9 +77,12 @@
                                         d="M6 14h12v-2H6zm0-3h12V9H6zm0-3h12V6H6zM4 18q-.825 0-1.412-.587T2 16V4q0-.825.588-1.412T4 2h16q.825 0 1.413.588T22 4v18l-4-4z"
                                     />
                                 </svg>
+                                <span class="ml-2 text-sm text-white">
+                                    {{ posts.comments_count }}
+                                </span>
                             </Link>
 
-                            <form
+                            <button
                                 @click.prevent="submit(posts.id)"
                                 class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-600 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
@@ -89,7 +92,7 @@
                                         d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"
                                     />
                                 </svg>
-                            </form>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -101,7 +104,7 @@
 <script setup>
 import NavbarLayout from '@/layouts/NavbarLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive } from 'vue';
 
 const props = defineProps({
     post: Array,
@@ -111,7 +114,7 @@ const form = useForm({
     like: false,
 });
 
-const likedPosts = ref({});
+const likedPosts = reactive({});
 
 const getImageUrl = (Path) => {
     if (Path) {
@@ -130,8 +133,7 @@ const like = (postId, like) => {
     form.post(route('likedislike'), {
         preserveScroll: true,
         onSuccess: () => {
-            likedPosts.value[postId] = !likedPosts.value[postId];
-            console.log('Like envoyé avec succès');
+            likedPosts[postId] = !likedPosts[postId];
         },
         onError: (errors) => {
             console.error('Erreur:', errors);
@@ -141,7 +143,7 @@ const like = (postId, like) => {
 
 onMounted(() => {
     props.post.forEach((p) => {
-        likedPosts.value[p.id] = p.isLiked;
+        likedPosts[p.id] = p.isLiked;
     });
 });
 </script>

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
@@ -25,5 +26,9 @@ class Post extends Model
     {
         return $this->hasMany(Like::class)->where('like', false);
     }
-
+    
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

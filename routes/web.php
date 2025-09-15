@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
@@ -10,13 +11,17 @@ use Inertia\Inertia;
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('homepage', [HomepageController::class,'index'])->name('homepage')->middleware('auth');
+Route::get('homepage', [HomepageController::class, 'index'])->name('homepage')->middleware('auth');
 
 route::resource('post', PostController::class)->middleware('auth');
 
-Route::post('post/like_dislike', [PostController::class,'ajaxLike'])->name('likedislike')->middleware('auth');
+Route::get('/comments/create/{post}', [CommentController::class, 'create'])->name('comment.create');
+Route::post('/comments/create/', [CommentController::class, 'store'])->name('comment.store');
+
+
+Route::post('post/like_dislike', [PostController::class, 'ajaxLike'])->name('likedislike')->middleware('auth');
 
 
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

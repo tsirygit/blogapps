@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function hasLiked($postId)
     {
-        
+
         return $this->likes()->where('post_id', $postId)->where('like', true)->exists();
     }
 
@@ -92,5 +92,10 @@ class User extends Authenticatable
             'hasLiked' => $this->hasLiked($postId),
             'hasDisliked' => $this->hasDisliked($postId)
         ];
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 }

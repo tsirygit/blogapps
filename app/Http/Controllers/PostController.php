@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -50,10 +51,9 @@ class PostController extends Controller
 
         $validated['image'] = $path;
         $validated['user_id'] = Auth::id();
-        $validated['like_count'] = 0;
 
 
-        $post = Post::create($validated);
+        Post::create($validated);
 
 
         return redirect()->route('homepage')->with('success', 'Votre post a été publié avec succès.');
@@ -64,9 +64,20 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $posts = Post::withCount('likes')->get();
+
+        $comments = Comment::withCount('comments')->get();
+
+        foreach ($posts as $post) {
+            $post->isLiked = $post->likes()->where('user_id', Auth::id())->exists();
+        }
+
+        foreach ($comments as $comment) {
+            $comment->iscomment = $post->comments()->where('user_id', Auth::id())->exists();
+        }
 
         return Inertia::render('Posts/Show', [
-            'post' => $post
+            'post' => $post,
         ]);
     }
 
@@ -117,7 +128,7 @@ class PostController extends Controller
         return redirect()->route('homepage')->with('success', 'Votre post a été supprimer  avec avec succès.');
     }
 
-    public function ajaxLike(Request $request) 
+    public function ajaxLike(Request $request)
     {
 
         $request->validate([
@@ -125,15 +136,14 @@ class PostController extends Controller
             'like' => 'nullable|boolean',
         ]);
 
-         $user = auth()->user();
+        $user = auth()->user();
 
-         $postId = $request->post_id;
+        $postId = $request->post_id;
 
-         $like = $request->like;
+        $like = $request->like;
 
-         $likeDislike = $user->LikeDislike($postId, $like);
+        $likeDislike = $user->LikeDislike($postId, $like);
 
-         return redirect()->route('homepage')->with('status', $likeDislike);
-       
+        return redirect()->route('homepage')->with('status', $likeDislike);
     }
 }
