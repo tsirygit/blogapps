@@ -15,11 +15,11 @@
     </div>
     <div class="my-5 mt-15 px-20">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div v-for="posts in post" :key="posts.id">
+            <div v-for="post in posts" :key="post.id">
                 <div class="max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <div class="flex justify-end">
                         <Link
-                            :href="route('post.show', posts.id)"
+                            :href="route('post.show', post.id)"
                             class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
                             <svg
@@ -41,7 +41,7 @@
                     </div>
 
                     <a href="#">
-                        <img class="rounded-t-lg" :src="getImageUrl(posts.image)" alt="" />
+                        <img class="rounded-t-lg" :src="getImageUrl(post.image)" alt="" />
                     </a>
                     <div class="p-5">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ posts.title }}</h5>
@@ -49,10 +49,10 @@
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ posts.content }}</p>
                         <div class="flex justify-center gap-4">
                             <button
-                                @click.prevent="like(posts.id, true)"
+                                @click.prevent="like(post.id, true)"
                                 :class="[
                                     'inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium text-white focus:ring-4 focus:outline-none',
-                                    likedPosts[posts.id] ? 'bg-red-600' : 'bg-blue-600 hover:bg-blue-700',
+                                    likedPosts[post.id] ? 'bg-red-600' : 'bg-blue-600 hover:bg-blue-700',
                                     'focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800',
                                 ]"
                             >
@@ -63,12 +63,12 @@
                                     />
                                 </svg>
                                 <span class="ml-2 text-sm text-white">
-                                    {{ posts.likes_count }}
+                                    {{ post.likes_count }}
                                 </span>
                             </button>
 
                             <Link
-                                :href="route('comment.create', posts.id)"
+                                :href="route('comment.create', post.id)"
                                 class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -78,12 +78,12 @@
                                     />
                                 </svg>
                                 <span class="ml-2 text-sm text-white">
-                                    {{ posts.comments_count }}
+                                    {{ post.comments_count }}
                                 </span>
                             </Link>
 
                             <button
-                                @click.prevent="submit(posts.id)"
+                                @click.prevent="submit(post.id)"
                                 class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-600 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -107,11 +107,11 @@ import { Link, useForm } from '@inertiajs/vue3';
 import { onMounted, reactive } from 'vue';
 
 const props = defineProps({
-    post: Array,
+    posts: Array,
 });
 const form = useForm({
     post_id: null,
-    like: false,
+    like: null,
 });
 
 const likedPosts = reactive({});
@@ -142,7 +142,7 @@ const like = (postId, like) => {
 };
 
 onMounted(() => {
-    props.post.forEach((p) => {
+    props.posts.forEach((p) => {
         likedPosts[p.id] = p.isLiked;
     });
 });

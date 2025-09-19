@@ -13,13 +13,13 @@ class CommentController extends Controller
     public function create(Post $post)
     {
 
-        
+
         if (!Auth::check()) {
 
             abort(403, 'Accès refusé');
         }
 
-        return Inertia::render('Comments/Create',[
+        return Inertia::render('Comments/Create', [
             'post' => $post,
         ]);
     }
@@ -29,13 +29,13 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $validated = $request->validate([
             'post_id' => 'required|integer|exists:posts,id',
             'content' => 'required|string',
         ]);
 
-       
+
         $validated['user_id'] = Auth::id();
 
 
@@ -44,5 +44,4 @@ class CommentController extends Controller
 
         return redirect()->route('homepage')->with('success', 'Vous commenter le publication avec succès.');
     }
-
 }

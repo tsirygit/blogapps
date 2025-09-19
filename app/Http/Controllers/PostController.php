@@ -64,17 +64,10 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $posts = Post::withCount('likes')->get();
 
-        $comments = Comment::withCount('comments')->get();
-
-        foreach ($posts as $post) {
-            $post->isLiked = $post->likes()->where('user_id', Auth::id())->exists();
-        }
-
-        foreach ($comments as $comment) {
-            $comment->iscomment = $post->comments()->where('user_id', Auth::id())->exists();
-        }
+        $post->load(['comments.user', 'likes']);
+        $post->loadCount(['likes', 'comments']);
+        $post->isLiked = $post->likes()->where('user_id', Auth::id())->exists();
 
         return Inertia::render('Posts/Show', [
             'post' => $post,

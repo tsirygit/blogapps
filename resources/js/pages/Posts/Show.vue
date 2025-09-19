@@ -47,7 +47,11 @@
                                         d="M6 14h12v-2H6zm0-3h12V9H6zm0-3h12V6H6zM4 18q-.825 0-1.412-.587T2 16V4q0-.825.588-1.412T4 2h16q.825 0 1.413.588T22 4v18l-4-4z"
                                     />
                                 </svg>
+                                <span class="ml-2 text-sm text-white">
+                                    {{ post.comments_count }}
+                                </span>
                             </div>
+
                             <button
                                 @click.prevent="submit(post.id)"
                                 class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-600 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -65,10 +69,15 @@
             </div>
         </div>
     </div>
+    <div>
+        <Comment :post="post" />
+    </div>
 </template>
 
 <script setup>
+import Comment from '@/composables/comment/Comment.vue';
 import NavbarLayout from '@/layouts/NavbarLayout.vue';
+
 import { useForm } from '@inertiajs/vue3';
 import { onMounted, reactive } from 'vue';
 
@@ -103,9 +112,9 @@ const like = (postId, like) => {
 };
 
 onMounted(() => {
-    props.post.forEach((p) => {
-        likedPosts[p.id] = p.isLiked;
-    });
+    if (props.post) {
+        likedPosts[props.post] = props.post.isLiked;
+    }
 });
 
 const submit = (postId) => {
