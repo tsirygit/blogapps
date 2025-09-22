@@ -44,6 +44,7 @@ class PostController extends Controller
         ]);
 
 
+        $path = null;
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('posts', 'public');
@@ -65,7 +66,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
 
-        $post->load(['comments.user', 'likes']);
+        $post->load(['comments.user', 'likes','user']);
         $post->loadCount(['likes', 'comments']);
         $post->isLiked = $post->likes()->where('user_id', Auth::id())->exists();
 

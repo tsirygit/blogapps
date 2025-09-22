@@ -2,10 +2,15 @@
     <NavbarLayout />
     <div class="flex justify-center">
         <div class="mt-5 px-20 lg:mt-10">
-            <div v-if="post">
-                <div
-                    class="flex flex-col items-center gap-10 rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-                >
+            <div
+                class="flex flex-col items-center gap-10 rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:bg-gray-100 md:max-w-xl md:flex-row dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+            >
+                <div v-if="post">
+                    <p v-if="post.user" class="text-sm text-gray-500 dark:text-gray-400">
+                        Publié par <span class="font-semibold">{{ post.user.name }}</span>
+                    </p>
+                    <p v-else class="text-sm text-red-500">Auteur inconnu</p>
+
                     <img
                         class="h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
                         :src="getImageUrl(post.image)"

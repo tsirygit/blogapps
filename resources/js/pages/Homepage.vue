@@ -17,7 +17,12 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div v-for="post in posts" :key="post.id">
                 <div class="max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                    <div class="flex justify-end">
+                    <div class="flex justify-between">
+                        <p v-if="post.user" class="text-sm text-gray-500 dark:text-gray-400">
+                            Publié par <span class="font-semibold">{{ post.user.name }}</span>
+                        </p>
+                        <p v-else class="text-sm text-red-500">Auteur inconnu</p>
+
                         <Link
                             :href="route('post.show', post.id)"
                             class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
