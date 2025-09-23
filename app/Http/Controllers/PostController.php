@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\Post;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -66,7 +67,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
 
-        $post->load(['comments.user', 'likes','user']);
+        $post->load(['comments.user', 'likes', 'user']);
         $post->loadCount(['likes', 'comments']);
         $post->isLiked = $post->likes()->where('user_id', Auth::id())->exists();
 
@@ -80,6 +81,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        $this->authorize('edit', $post);
+
         return Inertia::render('Posts/Edit', [
             'post' => $post
         ]);
@@ -90,13 +93,15 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+
+
         $validated = $request->validate([
             'image' => 'nullable|image|mimes:png,jpg,jpeg,svg,gif|max:2048',
             'title' => 'required|string',
             'content' => 'required|string',
         ]);
 
-
+        $this->authorize('update', $post);
 
         if ($request->hasFile('image')) {
             if ($post->image) {
@@ -117,6 +122,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize('destroy', $post);
+
         $post->delete();
 
         return redirect()->route('homepage')->with('success', 'Votre post a été supprimer  avec avec succès.');

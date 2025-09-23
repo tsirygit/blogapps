@@ -13,6 +13,9 @@
             >posté un nouveau publication</Link
         >
     </div>
+    <div>
+        <FlashMessage />
+    </div>
     <div class="my-5 mt-15 px-20">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div v-for="post in posts" :key="post.id">
@@ -49,9 +52,9 @@
                         <img class="rounded-t-lg" :src="getImageUrl(post.image)" alt="" />
                     </a>
                     <div class="p-5">
-                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ posts.title }}</h5>
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ post.title }}</h5>
 
-                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ posts.content }}</p>
+                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ post.content }}</p>
                         <div class="flex justify-center gap-4">
                             <button
                                 @click.prevent="like(post.id, true)"
@@ -87,6 +90,18 @@
                                 </span>
                             </Link>
 
+                            <Link
+                                :href="route('post.edit', post.id)"
+                                class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 2048 2048">
+                                    <path
+                                        fill="currentColor"
+                                        d="M256 1408V512h1536v232q-55 8-107 32t-91 63l-569 569zm641 128l-51 52l-19 76H0V256h2048v540q-29-19-61-31t-67-19V384H128v1152zm951-640q42 0 78 15t64 41t42 63t16 79q0 39-15 76t-43 65l-717 717l-377 94l94-377l717-716q29-29 65-43t76-14m51 249q21-21 21-51q0-31-20-50t-52-20q-14 0-27 4t-23 15l-692 692l-34 135l135-34z"
+                                    />
+                                </svg>
+                            </Link>
+
                             <button
                                 @click.prevent="submit(post.id)"
                                 class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-600 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -107,6 +122,7 @@
 </template>
 
 <script setup>
+import FlashMessage from '@/components/FlashMessage.vue';
 import NavbarLayout from '@/layouts/NavbarLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { onMounted, reactive } from 'vue';
@@ -127,8 +143,13 @@ const getImageUrl = (Path) => {
     }
     return null;
 };
+
 const submit = (postId) => {
-    form.delete(route('post.destroy', postId));
+    form.delete(route('post.destroy', postId), {
+        onSuccess: () => {
+            showSuccess.value = true;
+        },
+    });
 };
 
 const like = (postId, like) => {

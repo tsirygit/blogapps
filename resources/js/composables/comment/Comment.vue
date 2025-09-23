@@ -5,7 +5,32 @@
             <div v-if="post.comments.length" class="flex justify-start gap-6">
                 <div v-for="comment in post.comments" :key="comment.id" class="rounded-md border bg-white p-2 shadow">
                     <span class="font-semibold text-gray-800">{{ comment.user.name }}:</span>
-                    <p class="text-sm text-gray-700">{{ comment.content }}</p>
+                    <p class="text-lg text-gray-700">{{ comment.content }}</p>
+                    <div class="mt-4 flex justify-center gap-4">
+                        <Link
+                            :href="route('comment.edit', comment.id)"
+                            class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 2048 2048">
+                                <path
+                                    fill="currentColor"
+                                    d="M256 1408V512h1536v232q-55 8-107 32t-91 63l-569 569zm641 128l-51 52l-19 76H0V256h2048v540q-29-19-61-31t-67-19V384H128v1152zm951-640q42 0 78 15t64 41t42 63t16 79q0 39-15 76t-43 65l-717 717l-377 94l94-377l717-716q29-29 65-43t76-14m51 249q21-21 21-51q0-31-20-50t-52-20q-14 0-27 4t-23 15l-692 692l-34 135l135-34z"
+                                />
+                            </svg>
+                        </Link>
+
+                        <button
+                            @click.prevent="submit(comment.id)"
+                            class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-600 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path
+                                    fill="white"
+                                    d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"
+                                />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div v-else class="text-sm text-gray-400">Aucun commentaire pour ce post.</div>
@@ -14,7 +39,19 @@
 </template>
 
 <script setup>
+import { Link, useForm } from '@inertiajs/vue3';
+
 const props = defineProps({
     post: Object,
 });
+
+const form = useForm({});
+
+const submit = (commentId) => {
+    form.delete(route('comment.destroy', commentId), {
+        onSuccess: () => {
+            form.reset();
+        },
+    });
+};
 </script>

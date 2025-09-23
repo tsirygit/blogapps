@@ -17,6 +17,9 @@ route::resource('post', PostController::class)->middleware('auth');
 
 Route::get('/comments/create/{post}', [CommentController::class, 'create'])->name('comment.create');
 Route::post('/comments/create/', [CommentController::class, 'store'])->name('comment.store');
+Route::get('/comments/edit/{comment}', [CommentController::class, 'edit'])->name('comment.edit');
+Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comment.update');
+Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comment.destroy');
 
 
 Route::post('post/like_dislike', [PostController::class, 'ajaxLike'])->name('likedislike')->middleware('auth');
